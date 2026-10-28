@@ -11,6 +11,7 @@ const debug = {
   bot: params.has('bot'),
   god: params.has('god'),
   skip: params.get('skip'),
+  power: params.get('power'),
   autostart: params.has('autostart') || params.has('bot'),
   timeScale: Math.max(1, Math.min(8, Number(params.get('ts')) || 1)),
   errors: [],

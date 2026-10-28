@@ -82,6 +82,7 @@ export class Game {
     // decolagem: impulso inicial para cima
     this.player.vy = -380;
     this.particles.burst(P.NOTE, this.player.x - 40, this.player.y, 14, 260, 1.2, false);
+    if (this.debug.power) setTimeout(() => this.onCollect(this.debug.power, this.player.x, this.player.y), 0);
   }
 
   setState(s) { this.state = s; this.stateT = 0; }
