@@ -6,6 +6,13 @@ import { drawMalaShape } from './player.js';
 
 export const SHARE_URL = 'https://pedromarra.github.io/fuga-do-flaviao/';
 
+// Autor do jogo (links do menu e do game over ficam no index.html).
+export const AUTHOR = {
+  insta: '@_pedro.marra',
+  github: 'github.com/PedroMarra',
+  banner: 'SIGA @_PEDRO.MARRA',
+};
+
 const GAME_OVER_LINES = [
   'Pego no embarque!',
   'Cancelaram seu passaporte',
@@ -164,7 +171,7 @@ export class UI {
   shareText(d) {
     const where = countryPhrase(d.country, false);
     const url = (location.protocol.startsWith('http') && !/^(localhost|127\.|192\.168\.|10\.)/.test(location.hostname)) ? location.origin + location.pathname : SHARE_URL;
-    return { text: `Fugi até ${where} com ${fmtPts(d.score)} pts na Fuga do Flavião! Duvido você passar: ${url}`, url };
+    return { text: `Fugi até ${where} com ${fmtPts(d.score)} pts na Fuga do Flavião! Duvido você passar: ${url}\nJogo do ${AUTHOR.insta} (${AUTHOR.github})`, url };
   }
 
   async share() {

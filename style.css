@@ -150,11 +150,35 @@ kbd { font-family: inherit; background: #fff; border: 2px solid var(--ink); bord
 .go-grid div { background: #fff; border: 3px solid var(--ink); border-radius: 0.6em; padding: 0.25em 0.2em; }
 .go-grid small { display: block; font-size: 0.6em; opacity: 0.7; letter-spacing: 0.05em; }
 .go-grid b { font-family: "Bungee", sans-serif; font-weight: 400; font-size: 0.95em; }
-#go-map { width: 100%; height: auto; display: block; border: 3px solid var(--ink); border-radius: 0.6em; background: #8fd8ff; }
+#go-map { width: 100%; height: auto; max-height: 24vh; object-fit: contain; display: block; border: 3px solid var(--ink); border-radius: 0.6em; background: #8fd8ff; }
 .go-buttons { display: flex; gap: 0.5em; justify-content: center; flex-wrap: wrap; margin-top: 0.7em; }
 .go-buttons .big-btn { font-size: 1.05em; padding: 0.45em 0.8em; }
-.toast { min-height: 1.2em; margin: 0.4em 0 0; font-size: 0.85em; }
+.toast { margin: 0.4em 0 0; font-size: 0.85em; }
+.toast:empty { display: none; }
 @media (max-width: 520px) { .go-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ---------- Autor / redes ---------- */
+.credit { margin: 0.7em 0 0; font-size: 0.8em; }
+.credit a { color: var(--ink); font-family: "Bungee", sans-serif; text-decoration: none; border-bottom: 2px solid var(--pink); }
+.follow-cta { margin: 0.6em 0 0; font-size: 0.8em; font-weight: 700; }
+.go-panel .social-btn { font-size: 0.66em; }
+.social { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4em; margin-top: 0.4em; }
+.social-btn {
+  display: inline-flex; align-items: center; gap: 0.35em;
+  font-family: "Bungee", sans-serif; font-size: 0.72em; text-decoration: none;
+  padding: 0.35em 0.7em; color: #fff;
+  border: 3px solid var(--ink); border-radius: 0.6em;
+  box-shadow: 0 0.15em 0 var(--ink);
+  transition: transform 80ms;
+}
+.social-btn svg { width: 1.3em; height: 1.3em; fill: none; stroke: currentColor; stroke-width: 2.2; }
+.social-btn svg .fill { fill: currentColor; stroke: none; }
+.social-btn:hover { transform: translateY(-2px) rotate(-1deg); }
+.social-btn:active { transform: translateY(2px); box-shadow: none; }
+.social-btn:focus-visible { outline: 3px dashed var(--pink); outline-offset: 3px; }
+.social-btn.insta { background: linear-gradient(45deg, #f9a03f, #e0306a 55%, #8a3ab9); }
+.social-btn.gh { background: #24292f; }
+.social-btn.star { background: linear-gradient(#ffe066, var(--gold)); color: var(--ink); }
 
 /* ---------- Aviso de retrato ---------- */
 #rotate-hint {
@@ -178,3 +202,6 @@ kbd { font-family: inherit; background: #fff; border: 2px solid var(--ink); bord
   .logo strong, #btn-play, #rotate-hint, .record { animation: none; }
 }
 body.reduce-motion .logo strong, body.reduce-motion #btn-play, body.reduce-motion #rotate-hint, body.reduce-motion .record { animation: none; }
+
+/* Tela baixa (celular deitado): some a dica de teclado para caber os links */
+@media (max-height: 420px) { #menu .hint.small { display: none; } }

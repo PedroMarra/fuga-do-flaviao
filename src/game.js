@@ -8,7 +8,7 @@ import { Obstacles, warmObstacleSprites } from './obstacles.js';
 import { Pickups, warmPickupSprites } from './powerups.js';
 import { Background } from './background.js';
 import { Audio } from './audio.js';
-import { UI } from './ui.js';
+import { UI, AUTHOR } from './ui.js';
 import { storage } from './storage.js';
 
 export class Game {
@@ -536,6 +536,8 @@ export class Game {
     const m = this.miami;
     if (!m) return;
     const p = this.player;
+    // aviãozinho com a faixa do autor cruzando o céu de Miami
+    this.bg.drawTowPlane(ctx, W + 80 - m.t * 150, 118, this.time, AUTHOR.banner);
     // viatura "EXTRADIÇÃO EXPRESS"
     if (m.vanX < W + 150) this.bg.drawVan(ctx, m.vanX, WORLD.groundY + 2, this.time);
     if (m.phase === 1) {

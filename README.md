@@ -6,7 +6,13 @@ Miami: desvie dos perseguidores, colete malas de dinheiro e chegue o mais longe 
 
 > Sátira cartunesca. Todos os personagens, marcas e instituições do jogo são inventados.
 
-**Jogar:** https://pedromarra.github.io/fuga-do-flaviao/ (depois de publicado)
+**Jogar:** https://pedromarra.github.io/fuga-do-flaviao/
+
+Feito por **Pedro Marra**: Instagram [@_pedro.marra](https://instagram.com/_pedro.marra) ·
+GitHub [@PedroMarra](https://github.com/PedroMarra)
+
+> Curtiu? Deixe uma ⭐ no repositório e [me siga no GitHub](https://github.com/PedroMarra)
+> para ver os próximos jogos.
 
 ## Como jogar
 

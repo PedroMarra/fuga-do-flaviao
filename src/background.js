@@ -505,4 +505,30 @@ export class Background {
     for (const wx of [-52, 56]) { circle(ctx, wx, -16, 15); ink(ctx, '#2a2733', 3.5); circle(ctx, wx, -16, 6); ctx.fillStyle = '#bbb'; ctx.fill(); }
     ctx.restore();
   }
+
+  // Aviãozinho de praia puxando faixa (voa para a esquerda; a faixa vem atrás, à direita).
+  drawTowPlane(ctx, x, y, t, text) {
+    ctx.save(); ctx.translate(x, y + Math.sin(t * 2) * 4);
+    // faixa ondulando
+    ctx.font = '17px "Bungee", sans-serif';
+    const bw = ctx.measureText(text).width + 36, bx = 70, bh = 34, seg = 12;
+    ctx.beginPath(); ctx.moveTo(26, 0); ctx.lineTo(bx, 0); ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.stroke();
+    const wave = (u) => Math.sin(t * 7 - u * 0.04) * 3;
+    ctx.beginPath(); ctx.moveTo(bx, -bh / 2 + wave(0));
+    for (let u = seg; u <= bw; u += seg) ctx.lineTo(bx + u, -bh / 2 + wave(u));
+    ctx.lineTo(bx + bw, bh / 2 + wave(bw));
+    for (let u = bw - seg; u >= 0; u -= seg) ctx.lineTo(bx + u, bh / 2 + wave(u));
+    ctx.closePath(); ink(ctx, '#fff6d6', 3);
+    ctx.fillStyle = '#e0262f'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(text, bx + bw / 2, 1 + wave(bw / 2));
+    // avião
+    ctx.beginPath(); ctx.moveTo(-30, 0); ctx.quadraticCurveTo(-30, -9, -16, -9); ctx.lineTo(22, -5); ctx.lineTo(30, -16); ctx.lineTo(34, -16); ctx.lineTo(32, 3); ctx.quadraticCurveTo(0, 8, -24, 6); ctx.closePath();
+    ink(ctx, '#ffd23f', 3);
+    ctx.beginPath(); ctx.moveTo(-18, -8); ctx.lineTo(-10, -15); ctx.lineTo(0, -15); ctx.lineTo(0, -8); ctx.closePath(); ink(ctx, '#8fe1ff', 2.5);
+    rrect(ctx, -6, -1, 22, 6, 3); ink(ctx, '#ff7bd5', 2.5);
+    // hélice
+    const k = Math.abs(Math.sin(t * 40));
+    ctx.fillStyle = INK; ctx.fillRect(-34, -1 - 11 * k, 3, 22 * k + 2);
+    ctx.restore();
+  }
 }
