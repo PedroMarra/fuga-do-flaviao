@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Fuga do Flavião — jogo arcade de um botão</title>
+  <meta name="description" content="Pilote o jatinho Master Air do Flavião, um empresário trapaceiro de mentirinha, do Brasil até Miami. Segure para subir, desvie dos caças e colete malas de dinheiro!">
+  <meta name="theme-color" content="#1d1838">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fuga do Flavião">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="Fuga do Flavião">
+  <meta property="og:description" content="Segure para fugir! Do Brasil a Miami num jatinho cheio de malas de dinheiro. Duvido você chegar mais longe.">
+  <meta property="og:url" content="https://pedromarra.github.io/fuga-do-flaviao/">
+  <meta property="og:image" content="https://pedromarra.github.io/fuga-do-flaviao/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Flavião pilotando o jatinho Master Air e soltando notas de dinheiro">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Fuga do Flavião">
+  <meta name="twitter:description" content="Segure para fugir! Do Brasil a Miami num jatinho cheio de malas de dinheiro.">
+  <meta name="twitter:image" content="https://pedromarra.github.io/fuga-do-flaviao/og.png">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Lilita+One&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <link rel="modulepreload" href="src/main.js">
+</head>
+<body>
+  <div id="stage">
+    <canvas id="game" aria-label="Fuga do Flavião"></canvas>
+    <div id="hud-buttons" class="ui-block" hidden>
+      <button id="btn-pause" class="icon-btn" aria-label="Pausar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+      </button>
+      <button id="btn-mute-hud" class="icon-btn mute-btn" aria-label="Som"></button>
+    </div>
+  </div>
+
+  <!-- Tela inicial -->
+  <section id="menu" class="screen" hidden>
+    <div class="panel menu-panel">
+      <h1 class="logo"><span>FUGA DO</span><strong>FLAVIÃO</strong></h1>
+      <p class="tagline">Do Brasil a Miami no jatinho Master Air</p>
+      <button id="btn-play" class="big-btn">JOGAR</button>
+      <p class="hint">Segure para fugir</p>
+      <p class="hint small">clique, toque, <kbd>Espaço</kbd> ou <kbd>↑</kbd> · <kbd>P</kbd> pausa · <kbd>M</kbd> mudo</p>
+      <div class="stats-row"><span id="menu-hi">HI 00000</span><span id="menu-malas">0 malas</span></div>
+      <div class="toggles">
+        <button id="btn-mute" class="toggle mute-btn" aria-pressed="false"></button>
+        <button id="btn-motion" class="toggle" aria-pressed="false">Reduzir movimento: não</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pausa -->
+  <section id="pause" class="screen dim" hidden>
+    <div class="panel">
+      <h2>PAUSADO</h2>
+      <p class="hint">O jatinho está em ponto morto.</p>
+      <button id="btn-resume" class="big-btn">CONTINUAR</button>
+      <div class="toggles">
+        <button id="btn-mute-p" class="toggle mute-btn"></button>
+        <button id="btn-motion-p" class="toggle">Reduzir movimento: não</button>
+        <button id="btn-quit" class="toggle">Desistir</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Game over -->
+  <section id="gameover" class="screen dim" hidden>
+    <div class="panel go-panel">
+      <h2 id="go-title">Pego no embarque!</h2>
+      <p id="go-record" class="record" hidden>NOVO RECORDE — DIGNO DE CPI!</p>
+      <div class="go-grid">
+        <div><small>PONTOS</small><b id="go-score">0</b></div>
+        <div><small>RECORDE</small><b id="go-hi">0</b></div>
+        <div><small>CHEGOU ATÉ</small><b id="go-country">BRASIL</b></div>
+        <div><small>MALAS</small><b id="go-malas">0</b></div>
+      </div>
+      <canvas id="go-map" width="480" height="150" aria-label="Mapa da rota"></canvas>
+      <div class="go-buttons">
+        <button id="btn-retry" class="big-btn">FUGIR DE NOVO</button>
+        <button id="btn-share" class="big-btn alt">COMPARTILHAR</button>
+      </div>
+      <p id="toast" class="toast" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <div id="rotate-hint" class="ui-block" hidden>
+    <span>↻ Gire o celular para jogar melhor</span>
+    <button id="btn-rotate-close" aria-label="Fechar aviso">✕</button>
+  </div>
+
+  <pre id="debug-out" hidden></pre>
+  <noscript>Este jogo precisa de JavaScript ligado.</noscript>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
