@@ -196,6 +196,7 @@ export class Game {
       if (this.stateT > JUICE.deathDelay) this.gameOver();
     } else if (this.state === 'miami') {
       this.updateMiami(dt);
+      this.score = Math.floor(this.totalDist) + this.bonus;
     }
 
     this.worldX += this.speed * dt;
@@ -396,7 +397,7 @@ export class Game {
     } else if (m.phase === 1) {
       // Flavião desce, comemora ajeitando o cabelo; a viatura chega
       m.pt += dt;
-      if (m.pt > 0.05 && !m.celebrated) { m.celebrated = true; this.particles.burst(P.CONFETTI, p.x + 80, 300, 50, 480, 1.5); this.sfx('record'); this.addBonus(1000, p.x + 120, 300, '#ffd23f'); }
+      if (m.pt > 0.05 && !m.celebrated) { m.celebrated = true; this.particles.burst(P.CONFETTI, p.x + 80, 300, 50, 480, 1.5); this.sfx('record'); this.addBonus(1000, p.x + 120, 300, '#ffd23f'); this.ui.banner('CHEGUEI!', 'Miami, aqui vou eu!', 1.5, '#7fe7e0'); }
       if (m.pt > 1.6) { m.vanX += ((W - 170) - m.vanX) * Math.min(1, dt * 3); if (!m.siren) { m.siren = true; this.sfx('siren'); } }
       if (m.pt > 3.6 || m.skip) { m.phase = 2; m.pt = 0; this.ui.banner('VOLTA ' + (this.lap + 1), 'Mais rápido! Fuja de novo!', 2.2, '#ffd23f'); p.pilotVisible = true; this.sfx('turbo'); }
     } else {
@@ -465,6 +466,7 @@ export class Game {
 
     const wx = lerp(this.pworldX, this.worldX, alpha);
     this.bg.draw(ctx, wx, this.time);
+    if (this.state === 'menu' || this.state === 'miami' || (this.state === 'paused' && this.pausedFrom === 'miami')) this.bg.drawRunway(ctx, wx);
 
     if (this.state === 'menu') { this.drawMenuScene(ctx); ctx.setTransform(k, 0, 0, k, 0, 0); return; }
 
