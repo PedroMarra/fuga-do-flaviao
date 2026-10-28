@@ -48,6 +48,8 @@ function magnetSprite() {
   });
 }
 
+export function warmPickupSprites() { malaSprite(); shieldSprite(); turboSprite(); magnetSprite(); }
+
 const LABEL = { shield: 'HABEAS CORPUS', turbo: 'PIX EXPRESSO', magnet: 'ÍMÃ DE BUFUNFA' };
 const COLOR = { shield: '#ffd23f', turbo: '#4ad7ff', magnet: '#ff5e7e' };
 

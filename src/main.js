@@ -39,7 +39,10 @@ function resize() {
   stage.style.setProperty('--stage-w', cssW + 'px');
 
   const dpr = Math.min(window.devicePixelRatio || 1, 3);
-  const rs = Math.max(0.5, Math.min(scale * dpr, MAX_RENDER_SCALE));
+  // Celular: menos pixels por quadro (o gargalo é preenchimento), ainda nítido.
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  const cap = coarse ? MAX_RENDER_SCALE * 0.75 : MAX_RENDER_SCALE;
+  const rs = Math.max(0.5, Math.min(scale * dpr, cap));
   const key = rs.toFixed(3);
   if (key !== lastKey) {
     lastKey = key;

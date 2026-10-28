@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Gerador de imagens — Fuga do Flavião</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Lilita+One&display=swap">
+  <style>
+    body { font-family: system-ui, sans-serif; background: #222; color: #eee; padding: 16px; }
+    canvas { display: block; margin: 8px 0 16px; max-width: 100%; border: 1px solid #555; }
+    a { color: #ffd23f; }
+  </style>
+</head>
+<body>
+  <h1>Gerador de imagens</h1>
+  <p>Gera a imagem de preview (og.png) e os ícones a partir da própria arte do jogo.
+     Clique nos links para baixar e salve na raiz do projeto / pasta <code>icons/</code>.</p>
+  <div id="out"></div>
+  <script type="module">
+    import { RS, outlinedText, INK, circle, rrect, ink } from '../src/util.js';
+    import { Background } from '../src/background.js';
+    import { jetSprite, cockpitSprite, drawHead, drawTorso } from '../src/player.js';
+    import { noteSprite } from '../src/particles.js';
+
+    await Promise.all([document.fonts.load('40px "Bungee"'), document.fonts.load('40px "Lilita One"')]).catch(() => {});
+    RS.scale = 3;
+    const out = document.getElementById('out');
+    const upload = new URLSearchParams(location.search).has('upload');
+
+    function emit(name, canvas) {
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a'); a.href = url; a.download = name; a.textContent = 'Baixar ' + name;
+      out.append(a, canvas);
+      if (upload) fetch('/__snap?name=' + name.replace('.png', ''), { method: 'POST', body: url });
+    }
+
+    function drawJetWithPilot(g, x, y, s, face = 'happy') {
+      g.save(); g.translate(x, y); g.scale(s, s); g.rotate(-0.12);
+      const jet = jetSprite(), cp = cockpitSprite();
+      g.fillStyle = '#ff9b2f'; g.beginPath(); g.moveTo(-63, -12); g.quadraticCurveTo(-110, -7, -63, -2); g.fill();
+      g.drawImage(jet.c, -jet.w / 2, -jet.h / 2, jet.w, jet.h);
+      g.save(); g.translate(32, -36); drawTorso(g, 20, 0.4, true, face); drawHead(g, 20, face, 0.4, { noShine: false }); g.restore();
+      g.drawImage(cp.c, -cp.w / 2, -cp.h / 2, cp.w, cp.h);
+      g.restore();
+    }
+
+    function notes(g, n, x0, y0, spread, seed = 1) {
+      const note = noteSprite();
+      let s = seed;
+      const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
+      for (let i = 0; i < n; i++) {
+        g.save(); g.translate(x0 - r() * spread, y0 + (r() - 0.3) * spread * 0.45); g.rotate(r() * 6); g.scale(1.3, 1.3 * (0.4 + r() * 0.6));
+        g.drawImage(note.c, -note.w / 2, -note.h / 2, note.w, note.h); g.restore();
+      }
+    }
+
+    // ---------- og.png (1200×630) ----------
+    {
+      const c = document.createElement('canvas'); c.width = 1200; c.height = 630;
+      const g = c.getContext('2d');
+      const bg = new Background();
+      bg.setCountry(7, true);
+      g.save(); g.scale(1.25, 1.25); g.translate(0, -30);
+      bg.draw(g, 200, 0);
+      g.restore();
+      g.fillStyle = 'rgba(29,24,56,0.18)'; g.fillRect(0, 0, 1200, 630);
+      notes(g, 46, 470, 420, 420, 7);
+      drawJetWithPilot(g, 640, 410, 2.4, 'happy');
+      g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.save(); g.translate(600, 92); g.rotate(-0.03);
+      outlinedText(g, 'FUGA DO', 0, -10, 56, '#ffffff', INK, 'Bungee', 14);
+      outlinedText(g, 'FLAVIÃO', 0, 66, 104, '#ffc928', INK, 'Bungee', 20);
+      g.restore();
+      g.save(); g.translate(1010, 560); g.rotate(-0.06);
+      rrect(g, -170, -34, 340, 68, 18); ink(g, '#ffffff', 6);
+      outlinedText(g, 'SEGURE PARA FUGIR!', 0, 2, 26, '#ff3b6b', INK, 'Bungee', 0.01);
+      g.restore();
+      emit('og.png', c);
+    }
+
+    // ---------- ícones ----------
+    function icon(size) {
+      const c = document.createElement('canvas'); c.width = size; c.height = size;
+      const g = c.getContext('2d');
+      const k = size / 512;
+      g.scale(k, k);
+      const grd = g.createLinearGradient(0, 0, 0, 512);
+      grd.addColorStop(0, '#29a3ff'); grd.addColorStop(1, '#c8f2ff');
+      g.fillStyle = grd; g.fillRect(0, 0, 512, 512);
+      g.fillStyle = '#ffe066'; circle(g, 400, 110, 60); g.fill();
+      notes(g, 18, 300, 380, 300, 3);
+      g.save(); g.translate(256, 250);
+      drawTorso(g, 110, 0.4, true, 'happy');
+      drawHead(g, 110, 'happy', 0.4);
+      g.restore();
+      return c;
+    }
+    emit('icon-512.png', icon(512));
+    emit('icon-192.png', icon(192));
+  </script>
+</body>
+</html>

@@ -355,30 +355,55 @@ export class Background {
 
   invalidate() { this.cache.clear(); }
 
-  build(i) {
+  // Desenha uma camada de um país (uma vez; depois é só drawImage).
+  buildLayer(i, li) {
+    const L = LAYERS[li], art = ART[i];
+    const cv = document.createElement('canvas');
+    cv.width = Math.ceil(TW * RS.scale);
+    cv.height = Math.ceil(L.h * RS.scale);
+    const g = cv.getContext('2d');
+    g.scale(RS.scale, RS.scale);
+    const rng = makeRng(1000 * (i + 1) + L.h);
+    if (L.key === 'clouds') {
+      for (let k = 0; k < 5; k++) cloud(g, k * 205 + rng() * 60, 40 + rng() * 120, 0.8 + rng() * 0.7, art.cloud, 0.9);
+    } else {
+      art[L.key](g, rng, L.h);
+    }
+    return { cv, ...L };
+  }
+
+  entry(i) {
     if (this.scale !== RS.scale) { this.cache.clear(); this.scale = RS.scale; }
     let c = this.cache.get(i);
-    if (c) return c;
-    const art = ART[i];
-    const layers = LAYERS.map((L) => {
-      const cv = document.createElement('canvas');
-      cv.width = Math.ceil(TW * RS.scale);
-      cv.height = Math.ceil(L.h * RS.scale);
-      const g = cv.getContext('2d');
-      g.scale(RS.scale, RS.scale);
-      const rng = makeRng(1000 * (i + 1) + L.h);
-      if (L.key === 'clouds') {
-        for (let k = 0; k < 5; k++) cloud(g, k * 205 + rng() * 60, 40 + rng() * 120, 0.8 + rng() * 0.7, art.cloud, 0.9);
-      } else {
-        art[L.key](g, rng, L.h);
-      }
-      return { cv, ...L };
-    });
-    c = { layers };
-    this.cache.set(i, c);
-    // mantém só o país atual, o anterior e o próximo em memória
-    for (const k of this.cache.keys()) if (k !== i && k !== this.idx && k !== this.prev && k !== (this.idx + 1) % 8) this.cache.delete(k);
+    if (!c) {
+      c = { layers: new Array(LAYERS.length).fill(null) };
+      this.cache.set(i, c);
+      // mantém em memória só o país atual, o anterior e o próximo
+      for (const k of this.cache.keys()) if (k !== i && k !== this.idx && k !== this.prev && k !== (this.idx + 1) % 8) this.cache.delete(k);
+    }
     return c;
+  }
+
+  build(i) {
+    const c = this.entry(i);
+    for (let li = 0; li < LAYERS.length; li++) if (!c.layers[li]) c.layers[li] = this.buildLayer(i, li);
+    return c;
+  }
+
+  // Pré-desenha o país seguinte aos poucos (uma camada por vez, em tempo ocioso).
+  prefetch(i) {
+    if (this.prefetching === i) return;
+    this.prefetching = i;
+    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 60));
+    const step = () => {
+      if (this.prefetching !== i) return;
+      const c = this.entry(i);
+      const li = c.layers.findIndex((l) => !l);
+      if (li < 0) { this.prefetching = -1; return; }
+      c.layers[li] = this.buildLayer(i, li);
+      idle(step, { timeout: 400 });
+    };
+    idle(step, { timeout: 400 });
   }
 
   setCountry(i, instant) {
@@ -387,9 +412,6 @@ export class Background {
     this.idx = i;
     this.fade = instant ? 1 : 0;
     this.build(i);
-    // pré-desenha o próximo país sem travar a fronteira
-    const next = (i + 1) % 8;
-    setTimeout(() => this.build(next), 400);
   }
 
   update(dt) {
@@ -399,9 +421,11 @@ export class Background {
   drawSky(ctx, i, alpha = 1, t = 0) {
     const art = ART[i];
     ctx.globalAlpha = alpha;
-    const g = ctx.createLinearGradient(0, 0, 0, GY);
-    g.addColorStop(0, art.sky[0]); g.addColorStop(1, art.sky[1]);
-    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    if (!art.grad) {
+      art.grad = ctx.createLinearGradient(0, 0, 0, GY);
+      art.grad.addColorStop(0, art.sky[0]); art.grad.addColorStop(1, art.sky[1]);
+    }
+    ctx.fillStyle = art.grad; ctx.fillRect(0, 0, W, H);
     const [col, sx, sy, sr] = art.sun;
     ctx.fillStyle = col; ctx.globalAlpha = alpha * 0.3; circle(ctx, sx, sy, sr * 1.35 + Math.sin(t * 2) * 3); ctx.fill();
     ctx.globalAlpha = alpha; circle(ctx, sx, sy, sr); ctx.fill();

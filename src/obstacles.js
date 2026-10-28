@@ -199,6 +199,13 @@ function papagaioSprite(frame) {
   });
 }
 
+// Desenha todos os sprites uma vez (evita engasgo no primeiro aparecimento).
+export function warmObstacleSprites() {
+  pomboSprite(0); pomboSprite(1); balaoSprite(); cacaSprite(); heliSprite(); droneSprite();
+  nuvemSprite(false); nuvemSprite(true); cargoSprite(); processoSprite();
+  condorSprite(0); condorSprite(1); papagaioSprite(0); papagaioSprite(1);
+}
+
 // Cores de destroços ao destruir com turbo/escudo.
 const DEBRIS = {
   pombo: ['#a9afbd', '#c4c9d4'], balao: ['#ff4f6d', '#ffd23f', '#4ad7ff'], caca: ['#93a4c8', '#6e7fa6', '#ff4f4f'],

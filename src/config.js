@@ -18,7 +18,8 @@ export const PLAYER = {
   thrust: 2350,        // empuxo para cima com o botão segurado
   gravity: 1300,       // gravidade ao soltar
   thrustRampUp: 10,    // quão rápido o empuxo chega ao máximo (curva, não binário)
-  thrustRampDown: 7,
+  thrustRampDown: 16,
+  releaseBrake: 1.8,  // gravidade extra ao soltar durante a subida
   maxRise: 470,
   maxFall: 540,
   hitboxScale: 0.8,    // hitbox ~20% menor que o desenho

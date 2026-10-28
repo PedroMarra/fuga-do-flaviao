@@ -186,14 +186,17 @@ export function drawHead(g, s, face, t, opts = {}) {
     g.quadraticCurveTo(-s * 1.0, -s * 1.05, -s * 0.2, -s * 1.22);
     g.quadraticCurveTo(s * 0.55, -s * 1.38, s * 0.88, -s * 0.85);
     g.quadraticCurveTo(s * 0.98, -s * 0.5, s * 0.84, -s * 0.18);
-    g.quadraticCurveTo(s * 0.74, -s * 0.62, s * 0.3, -s * 0.66);
-    g.quadraticCurveTo(-s * 0.3, -s * 0.72, -s * 0.66, -s * 0.5);
+    g.quadraticCurveTo(s * 0.74, -s * 0.58, s * 0.28, -s * 0.6);
+    g.quadraticCurveTo(-s * 0.05, -s * 0.62, -s * 0.22, -s * 0.8);   // risca lateral
+    g.quadraticCurveTo(-s * 0.4, -s * 0.6, -s * 0.66, -s * 0.5);
     g.quadraticCurveTo(-s * 0.76, -s * 0.36, -s * 0.86, -s * 0.12);
     g.closePath();
   };
   hairPath(); ink(g, HAIR, Math.max(2, s * 0.1));
   // brilho exagerado do gel (reflete o sol, varre o cabelo)
   g.save(); hairPath(); g.clip();
+  g.strokeStyle = 'rgba(255,255,255,0.22)'; g.lineWidth = Math.max(1, s * 0.05); // marcas do pente
+  for (const k of [-0.62, -0.3, 0.05, 0.4]) { g.beginPath(); g.moveTo(s * (k + 0.1), -s * 0.66); g.quadraticCurveTo(s * (k - 0.05), -s * 1.0, s * (k + 0.4), -s * 1.25); g.stroke(); }
   g.strokeStyle = 'rgba(255,255,255,0.55)'; g.lineWidth = s * 0.12;
   g.beginPath(); g.moveTo(-s * 0.55, -s * 0.72); g.quadraticCurveTo(0, -s * 1.12, s * 0.6, -s * 0.9); g.stroke();
   if (!opts.noShine) {
@@ -251,8 +254,10 @@ export function drawTorso(g, s, t, windy = true, face = 'normal') {
       const y = windy ? y0 + s * 0.1 - u * s * 0.75 + Math.sin(t * 22 - i * 1.2) * s * 0.2 * u : y0 + s * 0.2 + u * s * 0.9;
       pts.push([x, y]);
     }
-    for (const [x, y] of pts) g.lineTo(x, y - s * 0.09);
-    for (let i = pts.length - 1; i >= 0; i--) g.lineTo(pts[i][0] - (i === pts.length - 1 ? s * 0.12 : 0), pts[i][1] + s * 0.09);
+    pts.forEach(([x, y], i) => { const w = s * (0.17 - i * 0.012); g.lineTo(x, y - w); });
+    const [tx, ty] = pts[pts.length - 1];
+    g.lineTo(tx - s * 0.22, ty); // ponta da gravata
+    for (let i = pts.length - 1; i >= 0; i--) { const w = s * (0.17 - i * 0.012); g.lineTo(pts[i][0], pts[i][1] + w); }
     g.lineTo(s * 0.06, y0 + s * 0.3);
     g.closePath(); ink(g, GOLD, Math.max(2, s * 0.1));
   }
@@ -383,7 +388,9 @@ export class Player {
     const target = wantUp ? 1 : 0;
     const ramp = wantUp ? PLAYER.thrustRampUp : PLAYER.thrustRampDown;
     this.thrust += (target - this.thrust) * Math.min(1, ramp * dt);
-    this.acc = PLAYER.gravity - (PLAYER.thrust * this.thrust);
+    // Soltou enquanto subia: gravidade extra para frear rápido (resposta imediata, mas com curva).
+    const g = PLAYER.gravity * (!wantUp && this.vy < 0 ? PLAYER.releaseBrake : 1);
+    this.acc = g - (PLAYER.thrust * this.thrust);
     this.vy = clamp(this.vy + this.acc * dt, -PLAYER.maxRise, PLAYER.maxFall);
     this.y += this.vy * dt;
 

@@ -2,10 +2,10 @@
 // Estados: menu → playing ⇄ paused → dying → gameover; playing → miami → playing (volta 2).
 import { W, H, WORLD, PLAYER, SPEED, TRAIL, JUICE, ROUTE, COUNTRIES, PICKUPS } from './config.js';
 import { clamp, range, lerp, INK, outlinedText, ease } from './util.js';
-import { Player, drawFlaviaoStanding, jetSprite } from './player.js';
-import { Particles, P } from './particles.js';
-import { Obstacles } from './obstacles.js';
-import { Pickups } from './powerups.js';
+import { Player, drawFlaviaoStanding, jetSprite, cockpitSprite } from './player.js';
+import { Particles, P, noteSprite } from './particles.js';
+import { Obstacles, warmObstacleSprites } from './obstacles.js';
+import { Pickups, warmPickupSprites } from './powerups.js';
 import { Background } from './background.js';
 import { Audio } from './audio.js';
 import { UI } from './ui.js';
@@ -57,7 +57,11 @@ export class Game {
     this.miami = null;
   }
 
-  onResize() { this.bg.invalidate(); }
+  onResize() {
+    this.bg.invalidate();
+    clearTimeout(this.warmT);
+    this.warmT = setTimeout(() => { warmObstacleSprites(); warmPickupSprites(); jetSprite(); cockpitSprite(); noteSprite(); }, 50);
+  }
 
   // ---------- Controle de estados ----------
   start() {
@@ -182,6 +186,7 @@ export class Game {
 
       const idx = Math.min(7, Math.floor(this.routeDist / this.countryLen));
       if (idx !== this.countryIdx) this.onBorder(idx);
+      if (idx < 7 && this.routeDist - idx * this.countryLen > this.countryLen * 0.35) this.bg.prefetch(idx + 1);
       if (this.routeDist >= 8 * this.countryLen) this.startMiami();
 
       if (this.breather > 0) { this.breather -= dt; this.spawnEnabled = this.breather <= 0; }
@@ -286,6 +291,7 @@ export class Game {
 
   gameOver() {
     this.setState('gameover');
+    this.score = Math.floor(this.totalDist) + this.bonus;
     const prevHi = this.hi;
     const record = this.score > prevHi && prevHi > 0; // na 1ª partida não há recorde a bater
     if (this.score > prevHi) { this.hi = this.score; storage.hi = this.hi; }
@@ -416,6 +422,7 @@ export class Game {
         this.countryIdx = 0;
         this.bg.setCountry(0, false);
         this.ui.stamp(0, this.lap);
+        this.bg.prefetch(1);
         this.breather = ROUTE.breatherAfterBorder + 0.6;
         this.spawnEnabled = false;
         this.audio.setLap(this.lap);
