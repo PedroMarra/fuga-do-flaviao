@@ -80,7 +80,30 @@ function frame(now) {
   if (fpsT >= 0.5) { game.fps = Math.round(fpsN / fpsT); fpsN = 0; fpsT = 0; }
   requestAnimationFrame(frame);
 }
-requestAnimationFrame(frame);
+// ?fast=N (só para testes automáticos): avança N passos por tique via setTimeout,
+// independente do requestAnimationFrame (que quase não roda em navegador headless).
+const fast = Math.min(120, Number(params.get('fast')) || 0);
+// ?snap=nome:t1,t2 envia "fotos" do canvas ao servidor de teste em cada tempo de jogo (s).
+const snapArg = params.get('snap');
+const snaps = snapArg ? snapArg.split(':')[1].split(',').map(Number) : [];
+const snapName = snapArg ? snapArg.split(':')[0] : '';
+if (fast > 0) {
+  const tick = () => {
+    for (let i = 0; i < fast; i++) {
+      game.update(STEP);
+      if (snaps.length && game.time >= snaps[0]) {
+        const t = snaps.shift();
+        game.render(1);
+        fetch(`/__snap?name=${snapName}-${t}`, { method: 'POST', body: canvas.toDataURL('image/png') });
+      }
+    }
+    game.render(1);
+    setTimeout(tick, 16);
+  };
+  tick();
+} else {
+  requestAnimationFrame(frame);
+}
 
 // ---------- Fontes: redesenha sprites quando a fonte arcade chegar ----------
 if (document.fonts && document.fonts.load) {
