@@ -78,6 +78,7 @@ export class Game {
     this.speed = this.computeSpeed();
     this.setState('playing');
     this.ui.show(null);
+    this.audio.setLap(1);
     this.audio.startRun(this.countryIdx);
     // decolagem: impulso inicial para cima
     this.player.vy = -380;
@@ -417,7 +418,7 @@ export class Game {
         this.ui.stamp(0, this.lap);
         this.breather = ROUTE.breatherAfterBorder + 0.6;
         this.spawnEnabled = false;
-        this.audio.setCountry(0);
+        this.audio.setLap(this.lap);
         this.audio.startRun(0);
         this.miami = null;
         this.setState('playing');
@@ -453,7 +454,7 @@ export class Game {
     el.textContent = JSON.stringify({
       state: this.state, lap: this.lap, country: COUNTRIES[this.countryIdx].id, route: Math.round(this.routeDist),
       score: this.score, hi: this.hi, malas: this.malasRun, deaths: this.deaths, fps: this.fps,
-      obst: this.obstacles.active, parts: this.particles.alive, speed: Math.round(this.speed), errors: this.debug.errors,
+      obst: this.obstacles.active, parts: this.particles.alive, speed: Math.round(this.speed), audio: this.audio.ctx ? this.audio.ctx.state + (this.audio.timer ? '+music' : '') + (this.audio.eng ? '+engine' : '') : 'off', errors: this.debug.errors,
     });
   }
 
