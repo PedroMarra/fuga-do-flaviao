@@ -46,6 +46,8 @@ export class Audio {
   // Precisa de um gesto do usuário (política de autoplay dos navegadores).
   unlock() {
     try {
+      // Sem gesto do usuário o navegador bloqueia (e reclama no console): espera o próximo.
+      if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
       if (!this.ctx) {
         const AC = window.AudioContext || window.webkitAudioContext;
         if (!AC) return;
