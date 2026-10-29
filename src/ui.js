@@ -8,9 +8,9 @@ export const SHARE_URL = 'https://pedromarra.github.io/fuga-do-flaviao/';
 
 // Autor do jogo (links do menu e do game over ficam no index.html).
 export const AUTHOR = {
-  insta: '@_pedro.marra',
+  insta: '@_pedromarra',
   github: 'github.com/PedroMarra',
-  banner: 'SIGA @_PEDRO.MARRA',
+  banner: 'SIGA @_PEDROMARRA',
 };
 
 const GAME_OVER_LINES = [

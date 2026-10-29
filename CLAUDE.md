@@ -17,7 +17,7 @@ sintetizado (WebAudio). Publicado no GitHub Pages.
 - Sprites estáticos via `sprite()` em `src/util.js` (cache por escala de render).
 - Todos os personagens, marcas e instituições são fictícios. Exceções que vieram da especificação do Pedro:
   nome do jatinho "Master Air" e o power-up "Pix Expresso" (ícone sem logo real).
-- O jogo divulga o autor: Instagram @_pedro.marra e GitHub PedroMarra (menu, game over,
+- O jogo divulga o autor: Instagram @_pedromarra e GitHub PedroMarra (menu, game over,
   texto de compartilhar, faixa do aviãozinho em Miami). Textos em `AUTHOR` (`src/ui.js`),
   links no `index.html`.
 - Ao mudar URL de publicação, atualizar `index.html` (og:*) e `SHARE_URL` em `src/ui.js`.

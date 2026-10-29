@@ -8,7 +8,7 @@ Miami: desvie dos perseguidores, colete malas de dinheiro e chegue o mais longe 
 
 **Jogar:** https://pedromarra.github.io/fuga-do-flaviao/
 
-Feito por **Pedro Marra**: Instagram [@_pedro.marra](https://instagram.com/_pedro.marra) ·
+Feito por **Pedro Marra**: Instagram [@_pedromarra](https://instagram.com/_pedromarra) ·
 GitHub [@PedroMarra](https://github.com/PedroMarra)
 
 > Curtiu? Deixe uma ⭐ no repositório e [me siga no GitHub](https://github.com/PedroMarra)
